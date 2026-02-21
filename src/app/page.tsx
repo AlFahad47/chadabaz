@@ -1,65 +1,138 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { PinData } from "@/types";
+import PinForm from "@/components/PinForm";
+import PinDetails from "@/components/PinDetails";
+import PinList from "@/components/PinList";
+import MapSearch from "@/components/MapSearch";
+import { Shield } from "lucide-react";
+
+// Dynamically import the map to avoid SSR issues with Leaflet
+const Map = dynamic(() => import("@/components/Map"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full w-full items-center justify-center bg-zinc-100 dark:bg-zinc-900">
+      <div className="animate-spin rounded-full border-4 border-red-500 border-t-transparent h-12 w-12"></div>
+    </div>
+  ),
+});
 
 export default function Home() {
+  const [pins, setPins] = useState<PinData[]>([]);
+  const [selectedPin, setSelectedPin] = useState<PinData | null>(null);
+  const [newPinLocation, setNewPinLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [newPinCategory, setNewPinCategory] = useState<string>("Transport");
+  const [searchedLocation, setSearchedLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const fetchPins = async () => {
+    try {
+      const response = await fetch("/api/pins");
+      if (response.ok) {
+        const data = await response.json();
+        setPins(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch pins:", error);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    fetchPins();
+  }, []);
+
+  const handleMapClick = (lat: number, lng: number) => {
+    setNewPinLocation({ lat, lng });
+    setSelectedPin(null);
+    setSearchedLocation(null);
+    setNewPinCategory("Transport");
+  };
+
+  const handlePinClick = (pin: PinData) => {
+    setSelectedPin(pin);
+    setNewPinLocation(null);
+  };
+
+  const handlePinCreated = (newPin: PinData) => {
+    setPins([newPin, ...pins]);
+    setNewPinLocation(null);
+    setSelectedPin(newPin); // Open details for newly created pin
+  };
+
+  const handleVoteSuccess = (updatedPin: PinData) => {
+    setPins(pins.map((p) => (p._id === updatedPin._id ? updatedPin : p)));
+    setSelectedPin(updatedPin);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="flex h-screen w-full flex-col bg-zinc-50 dark:bg-black font-sans relative overflow-hidden">
+      {/* Header overlay */}
+      <header className="absolute top-0 left-0 right-0 z-10 p-4 pointer-events-none">
+        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row justify-between items-start gap-4">
+          <div className="bg-white/90 dark:bg-black/90 backdrop-blur-md px-6 py-4 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 pointer-events-auto flex items-center gap-3">
+            <div className="bg-red-500 p-2 rounded-xl text-white">
+              <Shield size={24} />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
+                Chadabaze Tracker
+              </h1>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Click anywhere on the map to report</p>
+            </div>
+          </div>
+          <MapSearch onLocationSelect={(lat, lng) => {
+            setSearchedLocation({ lat, lng });
+            setNewPinLocation(null);
+            setSelectedPin(null);
+          }} />
+        </div>
+      </header>
+
+      {/* Main Map Container */}
+      <main className="flex-1 w-full h-full relative z-0 pb-[80px] sm:pb-[90px]">
+        <Map
+          pins={pins}
+          onMapClick={handleMapClick}
+          onPinClick={handlePinClick}
+          newPinLocation={newPinLocation}
+          newPinCategory={newPinCategory}
+          searchedLocation={searchedLocation}
+          selectedPinLocation={selectedPin ? { lat: selectedPin.lat, lng: selectedPin.lng } : null}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
       </main>
+
+      {/* Pin List Bottom Sheet */}
+      <PinList pins={pins} onPinClick={handlePinClick} />
+
+      {/* Overlays */}
+      {(newPinLocation || selectedPin) && (
+        <div className="absolute inset-0 z-20 pointer-events-none flex items-center justify-end p-4 sm:p-8">
+          {/* Add a slightly dark backdrop on mobile only */}
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm sm:hidden pointer-events-auto"
+            onClick={() => { setNewPinLocation(null); setSelectedPin(null); }} />
+
+          <div className="pointer-events-auto w-full sm:w-auto z-30 animate-in slide-in-from-right-8 fade-in duration-300">
+            {newPinLocation && (
+              <PinForm
+                lat={newPinLocation.lat}
+                lng={newPinLocation.lng}
+                onClose={() => setNewPinLocation(null)}
+                onSubmitSuccess={handlePinCreated}
+                onCategoryChange={setNewPinCategory}
+              />
+            )}
+            {selectedPin && (
+              <PinDetails
+                pin={selectedPin}
+                onClose={() => setSelectedPin(null)}
+                onVoteSuccess={handleVoteSuccess}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
