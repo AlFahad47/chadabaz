@@ -11,6 +11,12 @@ export interface PinData {
     photos: string[];
     videoLinks: string[];
     category: string;
+    evidences?: {
+        photos: string[];
+        videoLinks: string[];
+        sourceOfInfo: string;
+        createdAt: string;
+    }[];
     votes: {
         yes: number;
         no: number;

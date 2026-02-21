@@ -10,6 +10,12 @@ export interface IPin extends Document {
     photos: string[];
     videoLinks: string[];
     category: string;
+    evidences?: {
+        photos: string[];
+        videoLinks: string[];
+        sourceOfInfo: string;
+        createdAt: Date;
+    }[];
     votes: {
         yes: number;
         no: number;
@@ -33,9 +39,23 @@ const PinSchema: Schema<IPin> = new mongoose.Schema(
             yes: { type: Number, default: 0 },
             no: { type: Number, default: 0 }
         },
-        votedDeviceIds: { type: [String], default: [] }
+        votedDeviceIds: { type: [String], default: [] },
+        evidences: {
+            type: [{
+                photos: { type: [String], default: [] },
+                videoLinks: { type: [String], default: [] },
+                sourceOfInfo: { type: String, required: true },
+                createdAt: { type: Date, default: Date.now }
+            }],
+            default: []
+        }
     },
     { timestamps: true }
 );
 
-export const Pin: Model<IPin> = mongoose.models.Pin || mongoose.model<IPin>("Pin", PinSchema);
+// Force delete the model to prevent schema caching issues during development
+if (mongoose.models.Pin) {
+    delete mongoose.models.Pin;
+}
+
+export const Pin: Model<IPin> = mongoose.model<IPin>("Pin", PinSchema);

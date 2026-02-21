@@ -32,6 +32,12 @@ export default function Home() {
       if (response.ok) {
         const data = await response.json();
         setPins(data);
+        // Also update the currently selected pin so its details refresh live
+        setSelectedPin(prev => {
+          if (!prev) return null;
+          const updated = data.find((p: PinData) => p._id === prev._id);
+          return updated || prev;
+        });
       }
     } catch (error) {
       console.error("Failed to fetch pins:", error);
@@ -39,8 +45,15 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line
     fetchPins();
+
+    // Poll for updates every 5 seconds to get live fact checks
+    const interval = setInterval(() => {
+      fetchPins();
+    }, 5000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleMapClick = (lat: number, lng: number) => {
@@ -62,7 +75,7 @@ export default function Home() {
   };
 
   const handleVoteSuccess = (updatedPin: PinData) => {
-    setPins(pins.map((p) => (p._id === updatedPin._id ? updatedPin : p)));
+    setPins(prev => prev.map((p) => (p._id === updatedPin._id ? updatedPin : p)));
     setSelectedPin(updatedPin);
   };
 

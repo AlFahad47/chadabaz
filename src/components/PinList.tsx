@@ -135,13 +135,17 @@ export default function PinList({ pins, onPinClick }: PinListProps) {
                                             {getCategoryIcon(pin.category)}
                                             {pin.category}
                                         </span>
-                                        {pin.amount > 0 && (
+                                        {(pin.amount || 0) > 0 && (
                                             <span className="px-2 py-0.5 rounded-full bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-xs font-semibold whitespace-nowrap">
                                                 ৳{pin.amount}
                                             </span>
                                         )}
-                                        <div className="ml-auto text-xs text-zinc-500">
-                                            {new Date(pin.createdAt).toLocaleDateString()}
+                                        <div className="ml-auto text-xs text-zinc-500 flex items-center gap-3">
+                                            <div className="flex gap-2 font-medium">
+                                                <span className="text-emerald-600 dark:text-emerald-400">Yes ({pin.votes?.yes || 0})</span>
+                                                <span className="text-red-600 dark:text-red-400">No ({pin.votes?.no || 0})</span>
+                                            </div>
+                                            <span>{new Date(pin.createdAt).toLocaleDateString()}</span>
                                         </div>
                                     </div>
                                 </div>
