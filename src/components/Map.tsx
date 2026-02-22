@@ -121,11 +121,11 @@ export default function Map({ pins, onMapClick, onPinClick, newPinLocation, sele
     return (
         <MapContainer
             center={center}
-            zoom={7}
+            zoom={9}
             className="h-full w-full z-0"
             maxBounds={bangladeshBounds}
             maxBoundsViscosity={1.0}
-            minZoom={6}
+            minZoom={7}
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

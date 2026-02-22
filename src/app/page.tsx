@@ -95,11 +95,19 @@ export default function Home() {
               <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Click anywhere on the map to report</p>
             </div>
           </div>
-          <MapSearch onLocationSelect={(lat, lng) => {
-            setSearchedLocation({ lat, lng });
-            setNewPinLocation(null);
-            setSelectedPin(null);
-          }} />
+          <MapSearch
+            onLocationSelect={(lat, lng) => {
+              setSearchedLocation({ lat, lng });
+              setNewPinLocation(null);
+              setSelectedPin(null);
+            }}
+            onGPSSelect={(lat, lng) => {
+              setNewPinLocation({ lat, lng });
+              setSelectedPin(null);
+              setSearchedLocation(null);
+              setNewPinCategory("Transport");
+            }}
+          />
         </div>
       </header>
 

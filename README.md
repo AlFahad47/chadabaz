@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chadabaze Map App
 
-## Getting Started
+A Next.js application designed to track, map, and expose illegal toll collection or extortion ("Chadabaze") activities. The app allows users to report incidents, pin them on an interactive map, provide evidence (photos/videos), and crowd-verify reports through a voting system.
 
-First, run the development server:
+## 🌟 Key Features
+
+- **Interactive Map:** View and pin locations of reported incidents using an interactive map interface.
+- **Detailed Reporting:** Record crucial information including the collector's name, amount demanded per stall/car, and the source of the information.
+- **Evidence Upload:** Support for uploading photos (via ImgBB) and linking video evidence (from Google Drive).
+- **Community Fact-Checking:** Users can vote ("Yes" or "No") on the authenticity of reported pins to ensure data reliability.
+- **Categorized Map Icons:** Custom map markers and UI elements based on report categories.
+
+## 🚀 Tech Stack
+
+- **Frontend:** Next.js (App Router), React, Tailwind CSS
+- **Backend:** Next.js API Routes
+- **Database:** MongoDB
+- **Mapping:** Leaflet & React Leaflet
+
+## 🛠️ Local Development Setup
+
+First, clone the repository and install the dependencies:
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory and add the required environment variables:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+NEXT_PUBLIC_IMGBB_API_KEY=your_imgbb_api_key
+```
+
+### Running Locally
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The project is optimized for deployment on [Vercel](https://vercel.com), the platform from the creators of Next.js.
 
-## Learn More
+### Steps to Deploy on Vercel:
+1. Push your code to a GitHub, GitLab, or Bitbucket repository.
+2. Go to Vercel and import your repository to create a new project.
+3. **Important:** Add your Environment Variables (`MONGODB_URI`, `NEXT_PUBLIC_IMGBB_API_KEY`, etc.) in the Vercel project settings before deploying.
+4. Click **Deploy**.
 
-To learn more about Next.js, take a look at the following resources:
+Vercel will automatically build and deploy your application, providing you with a live URL.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For more details on deploying Next.js applications, check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
