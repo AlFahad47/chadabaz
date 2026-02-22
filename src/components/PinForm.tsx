@@ -294,10 +294,10 @@ export default function PinForm({ lat, lng, onClose, onSubmitSuccess, onCategory
 
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || uploadingImage}
                     className="w-full mt-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-red-600/20"
                 >
-                    {loading ? "Submitting..." : "Submit Report"}
+                    {loading ? "Submitting..." : uploadingImage ? "Uploading Photos..." : "Submit Report"}
                 </button>
             </form>
         </div>
