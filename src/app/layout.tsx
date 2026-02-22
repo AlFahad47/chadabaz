@@ -25,10 +25,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen w-full relative overflow-hidden`}
         suppressHydrationWarning
       >
         {children}
+        <footer className="absolute bottom-0 w-full text-center py-1.5 bg-black/90 backdrop-blur-sm z-[9999] text-xs text-gray-400">
+          Created by <a href="https://github.com/AlFahad47" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition-colors font-medium ml-1">AlFahad47</a>
+        </footer>
       </body>
     </html>
   );

@@ -1,5 +1,7 @@
 # Chadabaze Map App
 
+**Live Demo:** [https://chadabaz.vercel.app](https://chadabaz.vercel.app)
+
 A Next.js application designed to track, map, and expose illegal toll collection or extortion ("Chadabaze") activities. The app allows users to report incidents, pin them on an interactive map, provide evidence (photos/videos), and crowd-verify reports through a voting system.
 
 ## 🌟 Key Features
